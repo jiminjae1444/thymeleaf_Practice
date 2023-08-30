@@ -18,6 +18,6 @@ public class Board {
     @Size(min=2,max=30,message = "제목은 2자이상 30자 이하입니다.")
     private String title;
     private String content;
-    @Size(max=10)
+    @Size(max=10 , message = "이름은 10자 이하입니다.")
     private String writer;
 }
