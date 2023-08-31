@@ -20,4 +20,9 @@ public class Board {
     private String content;
     @Size(max=10 , message = "이름은 10자 이하입니다.")
     private String writer;
+
+    //@OneToOne 일대일 연결 user-user_Detail
+    //@OneToMany 일대다 연결 user-board
+    //@ManyToMany 다대다 연결 user-role
+    //@ManyToOne 다대일 연결 board-user
 }
