@@ -1,5 +1,5 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="/fragments/common :: head('게시판')">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -84,23 +84,39 @@
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
                     내용 에러 메시지
                 </div>
-            </div>
-            <div class="mb-3">
-                <label for="writer" class="col-form-label">작성자</label>
-                <input type="text" class="form-control" id="writer" th:field="*{writer}" th:classappend="${#fields.hasErrors('content')} ?' is-invalid'">
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}">
-                    내용 에러 메시지
-                </div>
-            </div>
+<!--            </div>-->
+<!--&lt;!&ndash;            <div class="mb-3">&ndash;&gt;-->
+<!--&lt;!&ndash;                <label for="writer" class="col-form-label">작성자</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                <input type="text" class="form-control" id="writer" th:field="*{writer}" th:classappend="${#fields.hasErrors('content')} ?' is-invalid'">&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="invalid-feedback" th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}">&ndash;&gt;-->
+<!--&lt;!&ndash;                    내용 에러 메시지&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+           </div>
             <div class="text-end">
-                <button type="button" class="btn btn-primary">취소</button>
-                <button type="submit" class="btn btn-primary">학인</button>
+                <a th:href="@{/board/list}" class="btn btn-primary">취소</a>
+                <button type="submit" class="btn btn-primary">확인</button>
+                <button type="button" sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-primary" th:onclick="|deleteData(*{id})|">삭제</button>
             </div>
         </form>
     </div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
+<footer th:replace="fragments/common :: footer"></footer>
+<script>
+    function deleteData(id) {
+        if(confirm('이 글을 삭제 하시겠습니까?')==true){  //삭제여부 물어보기
+            $.ajax({
+                url: '/api/boards/' + id,
+                type: 'DELETE',
+                success: function(result) {
+                    console.log('result', result);
+                    alert('글이 삭제되었습니다.');
+                    window.location.href = '/board/list';
+                }
+            });
+        }else { //삭제를 취소
+            return false;
+        }
+    }
+</script> <!-- 호출 주소: /api/boards/{id} type은 삭제할것이므로 DELETE-->
 </body>
 </html>

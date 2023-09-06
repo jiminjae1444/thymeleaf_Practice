@@ -2,12 +2,15 @@ package com.example.thymeleaf.controller;
 
 import com.example.thymeleaf.model.Board;
 import com.example.thymeleaf.repository.BoardRepository;
+import com.example.thymeleaf.service.BoardService;
 import com.example.thymeleaf.validator.BoardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +25,9 @@ import java.util.List;
 public class BoardContorller {
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private BoardService boardService;
     @Autowired
     private BoardValidator boardValidator;
 
@@ -49,12 +55,15 @@ public class BoardContorller {
     }
 
     @PostMapping("/form")
-    public String greetSubmit(@Valid Board board, BindingResult bindingResult) {
+    public String postForm(@Valid Board board, BindingResult bindingResult, Authentication authentication) {
         boardValidator.validate(board,bindingResult);
         if (bindingResult.hasErrors()) {
             return "board/form";
         }
-        boardRepository.save(board);
+//        Authentication a = SecurityContextHolder.getContext().getAuthentication(); 2번째 방법
+        String username = authentication.getName();
+        boardService.save(username,board);
+//        boardRepository.save(board);
         return "redirect:/board/list";
     }
 }

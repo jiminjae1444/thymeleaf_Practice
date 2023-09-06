@@ -20,8 +20,8 @@ public class BoardValidator implements Validator {
         if(StringUtils.isEmpty(b.getContent())){
             errors.rejectValue("content","key","내용을 입력하세요");
         }
-        if (StringUtils.isEmpty(b.getWriter())) {
-            errors.rejectValue("writer","key","작성자를 입력하세요");
-        }
+//        if (StringUtils.isEmpty(b.getWriter())) {
+//            errors.rejectValue("writer","key","작성자를 입력하세요");
+//        }
     }
 }
