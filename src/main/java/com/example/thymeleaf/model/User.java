@@ -28,6 +28,6 @@ public class User {
 
 //    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY) //EAGER가 기본값 = OneToOne,ManyToOne LAZY가 기본값 = ManyToOne,ManyToMany
-//    @JsonIgnore
+    @JsonIgnore
     private List<Board> boards =new ArrayList<>();;
 }

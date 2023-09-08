@@ -1,8 +1,12 @@
 package com.example.thymeleaf.controller;
 
+import com.example.thymeleaf.mapper.UserMapper;
 import com.example.thymeleaf.model.Board;
+import com.example.thymeleaf.model.QUser;
 import com.example.thymeleaf.model.User;
 import com.example.thymeleaf.repository.UserRepository;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,19 +14,45 @@ import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
 
+import static com.example.thymeleaf.model.QUser.user;
+
 @RestController
 @RequestMapping("/api")
 @Slf4j
 public class UserApiController {
         @Autowired
         private UserRepository repository;
+        @Autowired
+        private UserMapper userMapper;
 
         @GetMapping("/users")
-        List<User> all() {
-            List<User> users = repository.findAll();
-            log.debug("getBoards().size() 호출전");
-            log.debug("getBoards().size() : {}", users.get(0).getBoards().size());
-            log.debug("getBoards().size() 호출후");
+        Iterable<User> all(@RequestParam(required = false) String method,@RequestParam(required = false) String text) {
+//            List<User> users = repository.findAll();
+            Iterable<User> users = null;
+            if("query".equals((method))){
+                users = repository.findByUsernameQuery(text);
+            } else if ("nativeQuery".equals(method)) {
+                users = repository.findByUsernameNativeQuery(text);
+            } else if ("querydsl".equals(method)) {
+               QUser user = QUser.user;
+//                BooleanExpression b = user.username.contains(text);
+//                if(true){
+//                 b = b.and(user.username.eq("HI"));
+//                }
+               Predicate predicate = user.username.contains(text);
+
+               users = repository.findAll(predicate);
+
+            } else if ("querydslCustom".equals(method)) {
+                users = repository.findByCustomUsername(text);
+            } else if ("mybatis".equals(method)) {
+               users = userMapper.getUsers(text);
+            } else {
+                users = repository.findAll();
+            }
+//            log.debug("getBoards().size() 호출전");
+//            log.debug("getBoards().size() : {}", users.get(0).getBoards().size());
+//            log.debug("getBoards().size() 호출후");
             return users;
         }
 
