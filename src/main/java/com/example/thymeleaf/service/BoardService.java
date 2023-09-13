@@ -6,6 +6,9 @@ import com.example.thymeleaf.repository.BoardRepository;
 import com.example.thymeleaf.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+
 @Service
 public class BoardService {
     @Autowired
@@ -15,6 +18,7 @@ public class BoardService {
 
     public Board save(String username, Board board) {
         User user = userRepository.findByUsername(username);
+        board.setCreate_date(LocalDateTime.now());
         board.setUser(user);
         return boardRepository.save(board);
     }

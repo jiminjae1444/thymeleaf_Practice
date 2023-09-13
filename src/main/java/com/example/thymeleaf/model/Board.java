@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -19,7 +20,7 @@ public class Board {
     private String content;
 //    @Size(max=10 , message = "이름은 10자 이하입니다.")
 //    private String writer;
-
+    private LocalDateTime create_date;
     @ManyToOne
     @JoinColumn(name = "user_id")//,referencedColumnName = "id" 생략해도 됨)
     @JsonIgnore

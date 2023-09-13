@@ -69,7 +69,7 @@
 <main class="flex-shrink-0">
     <div class="container">
         <h2 class="mt-5">게시판</h2>
-        <form action="#" th:action="@{/board/form}" th:object="${board}" method="post">
+        <form action="#" th:action="@{/board/form}" th:object="${board}" method="post" enctype="multipart/form-data">
             <input type="hidden" th:field="*{id}">
             <div class="mb-3">
                 <label for="title" class="form-label">제목</label>
@@ -84,6 +84,10 @@
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
                     내용 에러 메시지
                 </div>
+<!--                <div class="mb-3">-->
+<!--                        <label for="img2" class="form-lable">첨부파일</label>-->
+<!--                        <input type="file" class="form-control" id="img2">-->
+<!--                    </div>-->
 <!--            </div>-->
 <!--&lt;!&ndash;            <div class="mb-3">&ndash;&gt;-->
 <!--&lt;!&ndash;                <label for="writer" class="col-form-label">작성자</label>&ndash;&gt;-->
@@ -94,8 +98,8 @@
            </div>
             <div class="text-end">
                 <a th:href="@{/board/list}" class="btn btn-primary">취소</a>
-                <button type="submit" class="btn btn-primary">확인</button>
-                <button type="button" sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-primary" th:onclick="|deleteData(*{id})|">삭제</button>
+                <button type="submit" class="btn btn-primary">작성</button>
+<!--                <button type="button" sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-primary" th:onclick="|deleteData(*{id})|">삭제</button>-->
             </div>
         </form>
     </div>

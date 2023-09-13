@@ -92,6 +92,7 @@
 <!-- Begin page content -->
 <main class="flex-shrink-0">
     <div class="container">
+        <a th:href="@{/board/list}"><img class="mt-4" src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"></a>
         <h2 class="mt-5">게시판</h2>
         <div>총 건수 : <span th:text="${boards.totalElements}"></span></div>
         <form class="row g-3 d-flex justify-content-end" method="GET" th:action="@{/board/list}">
@@ -109,27 +110,35 @@
                 <th scope="col">번호</th>
                 <th scope="col">제목</th>
                 <th scope="col">작성자</th>
+                <th scope="col" class="col-auto">작성일</th>
             </tr>
             </thead>
             <tbody class="table-group-divider">
-            <tr th:each="board : ${boards}">
-                <td th:text="${board.id}">Mark</td>
-                <td><a th:text="${board.title}" th:href="@{/board/form(id=${board.id})}">Otto</a></td>
+            <tr th:each="board,i : ${boards}" th:onclick="'location.href=\'/board/view?id=' + ${board.id} + '\';'" style="cursor:pointer;">
+                <td th:text="${boards.getNumber() * boards.getSize() + i.index+1}">Mark</td>
+                <td th:text="${board.title}">Otto</td>
                 <td th:text="${board.user.username}">홍길동</td>
+                <td th:text="${#temporals.format(board.create_date,'yyyy-MM-dd HH:mm')}">작성일</td>
             </tr>
             </tbody>
         </table>
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
+                <li class="page-item">
+                    <a class="page-link"  th:href="@{/board/list(page=0,searchText=${param.searchText})}">맨앞</a>
+                </li>
                 <li class="page-item" th:classappend="${1 ==  boards.pageable.pageNumber + 1} ? 'disabled'">
-                    <a class="page-link" th:href="@{/board/list(page=${boards.pageable.pageNumber - 1},searchText=${param.searchText})}">Previous</a>
+                    <a class="page-link" th:href="@{/board/list(page=${boards.pageable.pageNumber - 1},searchText=${param.searchText})}">이전</a>
                 </li>
                 <li class="page-item " th:classappend="${i ==  boards.pageable.pageNumber + 1} ? 'disabled'" th:each="i : ${#numbers.sequence(startPage,endPage)}">
                     <a class="page-link" href="#" th:text="${i}" th:href="@{/board/list(page=${i - 1},searchText=${param.searchText})}">1</a>
                 </li>
                 <li class="page-item" th:classappend="${boards.totalPages ==  boards.pageable.pageNumber + 1} ? 'disabled'">
-                    <a class="page-link" href="#" th:href="@{/board/list(page=${boards.pageable.pageNumber + 1},searchText=${param.searchText})}">Next</a>
+                    <a class="page-link" href="#" th:href="@{/board/list(page=${boards.pageable.pageNumber + 1},searchText=${param.searchText})}">다음</a>
                 </li>
+<!--                <li class="page-item">-->
+<!--                    <a class="page-link" href="#" th:href="@{/board/list(page=${boards.totalpages - 1},searchText=${param.searchText})}">맨뒤</a>-->
+<!--                </li>-->
             </ul>
         </nav>
         <div class="text-end"><a type="button" class="btn btn-primary" th:href="@{/board/form}">쓰기</a></div>

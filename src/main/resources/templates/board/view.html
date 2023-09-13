@@ -1,14 +1,13 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="/fragments/common :: head('게시판')">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Login</title>
+  <title>게시판</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-  <!-- Custom styles for this template -->
-  <link th:href="@{/css/sign-in.css}" rel="stylesheet">
+  <link href="sticky-footer-navbar.css" th:href="@{/sticky-footer-navbar.css}" rel="stylesheet">
 </head>
-<body class="d-flex align-items-center py-4 bg-body-tertiary">
+<body class="d-flex flex-column h-100">
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
   <symbol id="check2" viewBox="0 0 16 16">
     <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
@@ -59,41 +58,71 @@
     </li>
   </ul>
 </div>
-<main class="form-signin w-100 m-auto">
-  <form th:action="@{/account/register}" method="post">
-    <a th:href="@{/}"><img class="mb-4" src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"></a>
-    <h1 class="h3 mb-3 fw-normal">회원가입</h1>
-    <div class="alert alert-danger" role="alert" th:if="${param.error}">
-      잘못된 아이디와 비밀번호입니다.
-    </div>
-    <div class="alert alert-success" role="alert" th:if="${param.logout}">
-      로그아웃 되었습니다.
-    </div>
-    <div class="form-floating">
-      <input type="text" class="form-control" id="username" name="username" placeholder="UserName" th:required="true">
-      <label for="username">UserName</label>
-      <p th:if="${usernameError}" th:text="${usernameError}" style="color:red"></p>
-    </div>
-    <div class="form-floating">
-      <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password" th:required="true">
-      <label for="floatingPassword">Password</label>
-    </div>
-    <div class="form-floating">
-      <input type="password" class="form-control" id="floatingPassword2" name="password2" placeholder="Password" th:required="true">
-      <label for="floatingPassword2">password-check</label>
-      <p th:if="${passwordError}" th:text="${passwordError}" style="color:red"></p>
-    </div>
 
-    <!--    <div class="form-check text-start my-3">-->
-    <!--      <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">-->
-    <!--      <label class="form-check-label" for="flexCheckDefault">-->
-    <!--        Remember me-->
-    <!--      </label>-->
-    <!--    </div>-->
-    <button class="btn btn-primary w-100 py-2" type="submit">회원가입</button>
-    <p class="mt-5 mb-3 text-body-secondary">&copy; 2017–2023</p>
-  </form>
+
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark" th:replace="fragments/common :: menu('board')">
+  </nav>
+</header>
+
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+  <div class="container">
+    <h2 class="mt-5">게시판</h2>
+    <form action="#" th:action="@{/board/form}" th:object="${board}" method="post" enctype="multipart/form-data">
+      <input type="hidden" th:field="*{id}">
+      <div class="mb-3">
+        <label for="title" class="form-label">제목</label>
+        <input type="text" class="form-control" id="title" th:classappend="${#fields.hasErrors('title')} ?' is-invalid'" th:field="*{title}" readonly>
+        <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+          제목 에러 메시지
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="content" class="form-label">내용</label>
+        <textarea class="form-control" id="content" rows="3" th:field="*{content}" th:classappend="${#fields.hasErrors('content')} ?' is-invalid'" readonly></textarea>
+        <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
+          내용 에러 메시지
+        </div>
+        <!--                <div class="mb-3">-->
+        <!--                        <label for="img2" class="form-lable">첨부파일</label>-->
+        <!--                        <input type="file" class="form-control" id="img2">-->
+        <!--                    </div>-->
+        <!--            </div>-->
+        <!--&lt;!&ndash;            <div class="mb-3">&ndash;&gt;-->
+        <!--&lt;!&ndash;                <label for="writer" class="col-form-label">작성자</label>&ndash;&gt;-->
+        <!--&lt;!&ndash;                <input type="text" class="form-control" id="writer" th:field="*{writer}" th:classappend="${#fields.hasErrors('content')} ?' is-invalid'">&ndash;&gt;-->
+        <!--&lt;!&ndash;                <div class="invalid-feedback" th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}">&ndash;&gt;-->
+        <!--&lt;!&ndash;                    내용 에러 메시지&ndash;&gt;-->
+        <!--&lt;!&ndash;                </div>&ndash;&gt;-->
+      </div>
+      <div class="text-end">
+        <a class="btn btn-primary" onclick="history.back()">목록으로</a>
+        <a class="btn btn-primary" th:if="${board.title != null and (#authorization.expression('hasAuthority(''ROLE_ADMIN'')')
+        or (board.user != null and #authentication.name==board.user.username))}" th:href="@{/board/form(id=*{id},title=*{title},content=*{content})}">수정</a>
+        <button type="button" class="btn btn-primary" th:if="${board.title != null and (#authorization.expression('hasAuthority(''ROLE_ADMIN'')')
+        or (board.user != null and #authentication.name==board.user.username))}" th:onclick="|deleteData(*{id})|">삭제</button>
+      </div>
+    </form>
+  </div>
 </main>
 <footer th:replace="fragments/common :: footer"></footer>
+<script>
+    function deleteData(id) {
+        if(confirm('이 글을 삭제 하시겠습니까?')==true){  //삭제여부 물어보기
+            $.ajax({
+                url: '/api/boards/' + id,
+                type: 'DELETE',
+                success: function(result) {
+                    console.log('result', result);
+                    alert('글이 삭제되었습니다.');
+                    window.location.href = '/board/list';
+                }
+            });
+        }else { //삭제를 취소
+            return false;
+        }
+    }
+</script> <!-- 호출 주소: /api/boards/{id} type은 삭제할것이므로 DELETE-->
 </body>
 </html>

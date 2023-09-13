@@ -20,4 +20,6 @@ public interface UserRepository extends JpaRepository<User,Long>, QuerydslPredic
 
     @Query(value = "select * from User u where u.username like %?1%",nativeQuery = true) //원하는 sql문 사용 가능
     List<User> findByUsernameNativeQuery(String username);
+
+    boolean existsByUsername(String username);
 }

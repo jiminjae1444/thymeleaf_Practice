@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 
 @Controller
 @RequestMapping("/board") //경로지정
@@ -36,8 +38,10 @@ public class BoardContorller {
                        @RequestParam(required = false,defaultValue = "") String searchText) {
      //   Page<Board> boards = boardRepository.findAll(pageable);
         Page<Board> boards = boardRepository.findByTitleContainingOrContentContaining(searchText,searchText,pageable);
-        int startPage = 1;//Math.max(boards.getPageable().getPageNumber() - 4, 1);
-        int endPage = boards.getTotalPages();//Math.min(boards.getTotalPages(),boards.getPageable().getPageNumber() + 4);
+        int block = 5;
+        int currentBlock = (boards.getPageable().getPageNumber() / block) * block;
+        int startPage = 1 + currentBlock;//Math.max(boards.getPageable().getPageNumber() - 4, 1);
+        int endPage = Math.min(boards.getTotalPages(),currentBlock+block);//Math.min(boards.getTotalPages(),boards.getPageable().getPageNumber() + 4);
         model.addAttribute("boards",boards);
         model.addAttribute("startPage",startPage);
         model.addAttribute("endPage",endPage);
@@ -65,5 +69,13 @@ public class BoardContorller {
         boardService.save(username,board);
 //        boardRepository.save(board);
         return "redirect:/board/list";
+
+
+    }
+    @GetMapping("/view")
+    public String view(Model model, @RequestParam(required = false) Long id) {
+        Board board = boardRepository.findById(id).orElse(null);
+        model.addAttribute("board",board);
+        return "board/view";
     }
 }
